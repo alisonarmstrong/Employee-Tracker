@@ -53,3 +53,44 @@ function choices() {
             }
         });
 }
+
+const viewEmployees = () => {
+    connection.query(
+        'SELECT first_name, last_name, role_id, manager_id',
+        function(err, res) {
+            if (err) throw err;
+            console.log(res);
+            choices();
+        }
+    );
+};
+
+const viewDepartments = () => {
+    connection.query(
+        'SELECT department',
+        function(err, res) {
+            if (err) throw err;
+            console.log(res);
+            choices();
+        }
+    );
+};
+
+const viewRoles = () => {
+    connection.query(
+        'SELECT title, salary, department',
+        function(err, res) {
+            if (err) throw err;
+            console.log(res);
+            choices();
+        }
+    );
+};
+
+
+const addEmployee
+const addDepartment
+const addRole
+
+
+const updateEmployeeRole
