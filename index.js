@@ -9,6 +9,11 @@ const connection = mysql.createConnection({
     database: 'company_db'
 });
 
+connection.connect((err) => {
+    if (err) throw err;
+    choices();
+  });
+  
 function choices() {
     inquirer.prompt([
             {
@@ -25,7 +30,7 @@ function choices() {
                     'Update Employee Role',
                 ]
             }
-        ]).then(answers => {
+        ]).then((answers) => {
             switch (answers.choices) {
                 case 'View Employees':
                     viewEmployees();
@@ -86,8 +91,7 @@ const viewRoles = () => {
 
 
 const addEmployee = () => {
-    inquirer
-    .prompt([
+    inquirer.prompt([
         {
             name: 'first_name',
             type: 'input',
@@ -109,7 +113,7 @@ const addEmployee = () => {
             message: 'manager:'
         },        
 
-    ]).then
+    ]).then()
 };
 
 const addDepartment = () => {
