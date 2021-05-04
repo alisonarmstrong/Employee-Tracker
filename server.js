@@ -2,16 +2,15 @@ const mysql = require('mysql');
 const inquirer = require('inquirer');
 
 const connection = mysql.createConnection({
-    host:
-    port:
-    user:
-    password:
-    database:
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+    password: 'password',
+    database: 'company_db'
 });
 
 function choices() {
-    inquirer
-        .prompt([
+    inquirer.prompt([
             {
                 name: 'choices',
                 type: 'list',
@@ -24,12 +23,10 @@ function choices() {
                     'Add Department',
                     'Add Role',
                     'Update Employee Role',
-                    'Exit'
                 ]
             }
-        ])
-        .then(answers => {
-            switch (answers.choice) {
+        ]).then(answers => {
+            switch (answers.choices) {
                 case 'View Employees':
                     viewEmployees();
                     break;
@@ -88,9 +85,62 @@ const viewRoles = () => {
 };
 
 
-const addEmployee
-const addDepartment
-const addRole
+const addEmployee = () => {
+    inquirer
+    .prompt([
+        {
+            name: 'first_name',
+            type: 'input',
+            message: 'first name:'
+        },   
+        {
+            name: 'last_name',
+            type: 'input',
+            message: 'last name:'
+        },
+        {
+            name: 'role',
+            type: 'input',
+            message: 'role:'
+        },  
+        {
+            name: 'manager',
+            type: 'input',
+            message: 'manager:'
+        },        
+
+    ]).then
+};
+
+const addDepartment = () => {
+    inquirer
+    .prompt([
+        {
+            name: 'department',
+            type: 'input',
+            message: 'enter name of new department'
+        }
+    ]).then
+};
+const addRole = () => {
+    connection.query('')
+    inquirer.prompt([
+        {
+            name: 'role',
+            type: 'input',
+            message: 'enter new role'
+        }
+
+    ])
+};
 
 
-const updateEmployeeRole
+const updateEmployeeRole = () => {}
+//     inquirer.prompt ([
+
+//     ]).then connection.query(
+//     if (err) throw err;
+//     console.log('employee role has been updated');
+//     choices();
+//     );
+// 
