@@ -58,7 +58,7 @@ function choices() {
 
 const viewEmployees = () => {
     connection.query(
-        'SELECT first_name, last_name, role_id, manager_id',
+        'SELECT * FROM employee',
         function(err, res) {
             if (err) throw err;
             console.log(res);
@@ -69,7 +69,7 @@ const viewEmployees = () => {
 
 const viewDepartments = () => {
     connection.query(
-        'SELECT department',
+        'SELECT * FROM department',
         function(err, res) {
             if (err) throw err;
             console.log(res);
@@ -80,7 +80,7 @@ const viewDepartments = () => {
 
 const viewRoles = () => {
     connection.query(
-        'SELECT title, salary, department',
+        'SELECT * FROM role',
         function(err, res) {
             if (err) throw err;
             console.log(res);
@@ -93,12 +93,12 @@ const viewRoles = () => {
 const addEmployee = () => {
     inquirer.prompt([
         {
-            name: 'first_name',
+            name: 'firstName',
             type: 'input',
             message: 'first name:'
         },   
         {
-            name: 'last_name',
+            name: 'lastName',
             type: 'input',
             message: 'last name:'
         },
@@ -113,38 +113,67 @@ const addEmployee = () => {
             message: 'manager:'
         },        
 
-    ]).then()
+    ]).then((answer) => {
+        connection.query('INSERT INTO employee SET ?',
+        {
+            first_name: answer.firstName,
+            last_name: answer.lastName,
+            role: answer.role,
+            manager: answer.manager
+
+        })
+    })
 };
 
 const addDepartment = () => {
-    inquirer
-    .prompt([
+    inquirer.prompt([
         {
             name: 'department',
             type: 'input',
             message: 'enter name of new department'
         }
-    ]).then
+    ]).then((answer) => {
+        connection.query('INSERT INTO department SET ?',
+        {
+            department: answer.department,
+        })
+    })
 };
 const addRole = () => {
-    connection.query('')
     inquirer.prompt([
         {
             name: 'role',
             type: 'input',
             message: 'enter new role'
+        },
+        {
+            name: 'salary',
+            type: 'input',
+            message: "enter salary"
+        },
+        {
+            name: 'departmentID',
+            type: 'input',
+            message: 'enter department id'
         }
-
+    ]).then((answer) => [
+        connection.query('INSERT INTO role SET ?',
+        {
+            title: answer.role,
+            salary: answer.salary,
+            department_id: answer.departmentID
+        })
     ])
 };
 
 
-const updateEmployeeRole = () => {}
-//     inquirer.prompt ([
-
-//     ]).then connection.query(
-//     if (err) throw err;
-//     console.log('employee role has been updated');
-//     choices();
-//     );
-// 
+const updateEmployeeRole = () => {
+    connection.query('')
+    inquirer.prompt([
+        {
+            name: 'role',
+            type: 'input',
+            message: 'enter new title'
+        },
+    ]).then
+}
