@@ -114,7 +114,7 @@ const addEmployee = () => {
         },        
 
     ]).then((answer) => {
-        connection.query('INSERT INTO employee SET ?',
+        connection.query('INSERT INTO employee_table (first_name, last_name, role, manager) VALUES ?',
         {
             first_name: answer.firstName,
             last_name: answer.lastName,
@@ -133,7 +133,7 @@ const addDepartment = () => {
             message: 'enter name of new department'
         }
     ]).then((answer) => {
-        connection.query('INSERT INTO department SET ?',
+        connection.query('INSERT INTO departmen_table (department) VALUES ?',
         {
             department: answer.department,
         })
@@ -157,7 +157,7 @@ const addRole = () => {
             message: 'enter department id'
         }
     ]).then((answer) => [
-        connection.query('INSERT INTO role SET ?',
+        connection.query('INSERT INTO role_table (title, salary, department_id) VALUES ?',
         {
             title: answer.role,
             salary: answer.salary,
