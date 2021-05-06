@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
+const { identity } = require('rxjs');
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -12,56 +13,56 @@ const connection = mysql.createConnection({
 connection.connect((err) => {
     if (err) throw err;
     choices();
-  });
-  
+});
+
 function choices() {
     inquirer.prompt([
-            {
-                name: 'choices',
-                type: 'list',
-                message: 'what would you like to do?',
-                choices: [
-                    'View Employees',
-                    'View Departments',
-                    'View Roles',
-                    'Add Employee',
-                    'Add Department',
-                    'Add Role',
-                    'Update Employee Role',
-                ]
-            }
-        ]).then((answers) => {
-            switch (answers.choices) {
-                case 'View Employees':
-                    viewEmployees();
-                    break;
-                case 'View Departments':
-                    viewDepartments();
-                    break;
-                case 'View Roles':
-                    viewRoles();
-                    break;
-                case 'Add Employee':
-                    addEmployee();
-                    break;
-                case 'Add Department':
-                    addDepartment();
-                    break;
-                case 'Add Role':
-                    addRole();
-                    break;
-                case 'Update Employee Role':
-                    updateEmployeeRole();            
-            }
-        });
+        {
+            name: 'choices',
+            type: 'list',
+            message: 'what would you like to do?',
+            choices: [
+                'View Employees',
+                'View Departments',
+                'View Roles',
+                'Add Employee',
+                'Add Department',
+                'Add Role',
+                'Update Employee Role',
+            ]
+        }
+    ]).then((answers) => {
+        switch (answers.choices) {
+            case 'View Employees':
+                viewEmployees();
+                break;
+            case 'View Departments':
+                viewDepartments();
+                break;
+            case 'View Roles':
+                viewRoles();
+                break;
+            case 'Add Employee':
+                addEmployee();
+                break;
+            case 'Add Department':
+                addDepartment();
+                break;
+            case 'Add Role':
+                addRole();
+                break;
+            case 'Update Employee Role':
+                updateEmployeeRole();
+        }
+    });
 }
 
 const viewEmployees = () => {
     connection.query(
         'SELECT * FROM employee',
-        function(err, res) {
+        function (err, res) {
             if (err) throw err;
-            console.log(res);
+            console.table(res);
             choices();
         }
     );
@@ -70,9 +71,9 @@ const viewEmployees = () => {
 const viewDepartments = () => {
     connection.query(
         'SELECT * FROM department',
-        function(err, res) {
+        function (err, res) {
             if (err) throw err;
-            console.log(res);
+            console.table(res);
             choices();
         }
     );
@@ -81,9 +82,9 @@ const viewDepartments = () => {
 const viewRoles = () => {
     connection.query(
         'SELECT * FROM role',
-        function(err, res) {
+        function (err, res) {
             if (err) throw err;
-            console.log(res);
+            console.table(res);
             choices();
         }
     );
@@ -96,7 +97,7 @@ const addEmployee = () => {
             name: 'firstName',
             type: 'input',
             message: 'first name:'
-        },   
+        },
         {
             name: 'lastName',
             type: 'input',
@@ -106,22 +107,26 @@ const addEmployee = () => {
             name: 'role',
             type: 'input',
             message: 'role:'
-        },  
+        },
         {
             name: 'manager',
             type: 'input',
             message: 'manager:'
-        },        
+        },
 
     ]).then((answer) => {
-        connection.query('INSERT INTO employee_table (first_name, last_name, role, manager) VALUES ?',
-        {
-            first_name: answer.firstName,
-            last_name: answer.lastName,
-            role: answer.role,
-            manager: answer.manager
+        connection.query('INSERT INTO employee SET ?',
+            {
+                first_name: answer.firstName,
+                last_name: answer.lastName,
+                role_id: answer.role,
+                manager_id: answer.manager
 
-        })
+            }, function (err, res) {
+                if (err) throw err;
+                console.log(res);
+                choices();
+            })
     })
 };
 
@@ -133,10 +138,14 @@ const addDepartment = () => {
             message: 'enter name of new department'
         }
     ]).then((answer) => {
-        connection.query('INSERT INTO departmen_table (department) VALUES ?',
-        {
-            department: answer.department,
-        })
+        connection.query('INSERT INTO department SET ?',
+            {
+                department_name: answer.department,
+            }, function (err, res) {
+                if (err) throw err;
+                console.log(res);
+                choices();
+            })
     })
 };
 const addRole = () => {
@@ -157,23 +166,43 @@ const addRole = () => {
             message: 'enter department id'
         }
     ]).then((answer) => [
-        connection.query('INSERT INTO role_table (title, salary, department_id) VALUES ?',
-        {
-            title: answer.role,
-            salary: answer.salary,
-            department_id: answer.departmentID
-        })
+        connection.query('INSERT INTO role SET ?',
+            {
+                title: answer.role,
+                salary: answer.salary,
+                department_id: answer.departmentID
+            }, function (err, res) {
+                if (err) throw err;
+                console.log(res);
+                choices();
+            })
     ])
 };
 
 
 const updateEmployeeRole = () => {
-    connection.query('')
     inquirer.prompt([
         {
-            name: 'role',
+            name: 'employee_id',
             type: 'input',
-            message: 'enter new title'
+            message: 'enter employee id number:'
         },
-    ]).then
+        {
+            name: 'new_role_id',
+            type: 'input',
+            message: 'enter new role id:'
+        },
+    ]).then(employeeUpdate => {
+        connection.query('UPDATE employee SET ? WHERE ?',
+            [{
+                role_id: employeeUpdate.new_role_id,
+            },
+            {
+                id: employeeUpdate.employee_id,
+            }], function (err, res) {
+                if (err) throw err;
+                console.log(res);
+                choices();
+            })
+    })
 }
